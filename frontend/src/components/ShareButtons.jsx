@@ -30,14 +30,14 @@ export default function ShareButtons({ storyId, title }) {
           onClick={shareWhatsApp}
           className="flex flex-col items-center gap-2 p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
-          <span className="text-2xl">💬</span>
+          <img src="/whatsapp.png" alt="WhatsApp" className="w-8 h-8" />
           <span className="text-sm font-medium">WhatsApp</span>
         </button>
         <button
           onClick={shareTelegram}
           className="flex flex-col items-center gap-2 p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
-          <span className="text-2xl">✈️</span>
+          <img src="/telegram.png" alt="Telegram" className="w-8 h-8" />
           <span className="text-sm font-medium">Telegram</span>
         </button>
       </div>
