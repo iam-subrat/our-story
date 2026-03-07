@@ -1,0 +1,13 @@
+# Backend
+backend/ourstory
+backend/ourstory.db
+backend/uploads/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# General
+.DS_Store
+*.log
