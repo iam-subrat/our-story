@@ -4,11 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -65,8 +63,6 @@ func initDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	os.MkdirAll("./uploads", 0755)
 }
 
 func enableCORS(w http.ResponseWriter) {
@@ -204,48 +200,22 @@ func getPhotos(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(photos)
 }
 
-func uploadPhoto(w http.ResponseWriter, r *http.Request) {
+func addPhotoMetadata(w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
 	if r.Method == "OPTIONS" {
 		return
 	}
 
-	r.ParseMultipartForm(5 << 20) // 5MB limit
-
-	file, header, err := r.FormFile("photo")
-	if err != nil {
-		http.Error(w, "Invalid file", http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-
-	// Validate file type
-	if !strings.HasPrefix(header.Header.Get("Content-Type"), "image/") {
-		http.Error(w, "Only images allowed", http.StatusBadRequest)
+	var photo Photo
+	if err := json.NewDecoder(r.Body).Decode(&photo); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Save file
-	filename := uuid.New().String() + filepath.Ext(header.Filename)
-	dst, err := os.Create(filepath.Join("./uploads", filename))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer dst.Close()
-	io.Copy(dst, file)
+	photo.ID = uuid.New().String()
+	photo.Timestamp = time.Now()
 
-	// Save to DB
-	photo := Photo{
-		ID:         uuid.New().String(),
-		StoryID:    r.FormValue("story_id"),
-		ImageURL:   "/uploads/" + filename,
-		Caption:    r.FormValue("caption"),
-		UploadedBy: r.FormValue("uploaded_by"),
-		Timestamp:  time.Now(),
-	}
-
-	_, err = db.Exec("INSERT INTO photos (id, story_id, image_url, caption, uploaded_by) VALUES (?, ?, ?, ?, ?)",
+	_, err := db.Exec("INSERT INTO photos (id, story_id, image_url, caption, uploaded_by) VALUES (?, ?, ?, ?, ?)",
 		photo.ID, photo.StoryID, photo.ImageURL, photo.Caption, photo.UploadedBy)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -263,8 +233,7 @@ func main() {
 	http.HandleFunc("/api/stories", createStory)
 	http.HandleFunc("/api/stories/", getStory)
 	http.HandleFunc("/api/photos", getPhotos)
-	http.HandleFunc("/api/upload", uploadPhoto)
-	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
+	http.HandleFunc("/api/photos/add", addPhotoMetadata)
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -34,16 +34,16 @@ export const api = {
     return res.json();
   },
 
-  async uploadPhoto(storyId, file, caption, uploadedBy) {
-    const formData = new FormData();
-    formData.append('photo', file);
-    formData.append('story_id', storyId);
-    formData.append('caption', caption);
-    formData.append('uploaded_by', uploadedBy);
-
-    const res = await fetch(`${API_BASE}/api/upload`, {
+  async addPhotoMetadata(storyId, imageUrl, caption, uploadedBy) {
+    const res = await fetch(`${API_BASE}/api/photos/add`, {
       method: 'POST',
-      body: formData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        story_id: storyId,
+        image_url: imageUrl,
+        caption: caption,
+        uploaded_by: uploadedBy
+      })
     });
     return res.json();
   }

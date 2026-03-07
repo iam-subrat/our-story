@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useLocation, Link } from 'react-router-dom'
 import { api } from '../api'
 import PhotoUploadModal from '../components/PhotoUploadModal'
+import AddCaptionModal from '../components/AddCaptionModal'
 import Timeline from '../components/Timeline'
 import ShareButtons from '../components/ShareButtons'
 
@@ -12,6 +13,7 @@ export default function StoryPage() {
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)
   const [showUpload, setShowUpload] = useState(false)
+  const [showCaption, setShowCaption] = useState(false)
   const [editingAlbum, setEditingAlbum] = useState(false)
   const [albumLink, setAlbumLink] = useState('')
   const showUserLink = location.state?.showUserLink
@@ -79,7 +81,7 @@ export default function StoryPage() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-1">{story.title}</h1>
-          <Link 
+          <Link
             to={`/user/${encodeURIComponent(story.creator_name)}`}
             className="text-gray-600 hover:text-primary hover:underline"
           >
@@ -87,10 +89,10 @@ export default function StoryPage() {
           </Link>
           {story.story_date && (
             <p className="text-gray-500 text-sm mt-1">
-              {new Date(story.story_date).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              {new Date(story.story_date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}
             </p>
           )}
@@ -178,23 +180,44 @@ export default function StoryPage() {
         <ShareButtons storyId={id} title={story.title} />
 
         {/* Add Photo Button */}
-        <button
-          onClick={() => setShowUpload(true)}
-          className="w-full bg-primary text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-colors mb-8 shadow-sm"
-        >
-          + Add Your Photo
-        </button>
+        <div className="flex gap-3 mb-8">
+          <button
+            onClick={() => setShowUpload(true)}
+            className="flex-1 bg-primary text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+          >
+            + Upload to Album
+          </button>
+          <button
+            onClick={() => setShowCaption(true)}
+            className="flex-1 bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-colors shadow-sm"
+          >
+            + Add Caption
+          </button>
+        </div>
 
         {/* Timeline */}
-        <Timeline photos={photos} />
+        <Timeline photos={photos} albumLink={story.album_link} />
       </div>
 
       {/* Upload Modal */}
       {showUpload && (
         <PhotoUploadModal
           storyId={id}
+          albumLink={story.album_link}
           onClose={() => setShowUpload(false)}
-          onSuccess={handlePhotoUploaded}
+          onSuccess={() => setShowUpload(false)}
+        />
+      )}
+
+      {/* Add Caption Modal */}
+      {showCaption && (
+        <AddCaptionModal
+          storyId={id}
+          onClose={() => setShowCaption(false)}
+          onSuccess={() => {
+            loadPhotos()
+            setShowCaption(false)
+          }}
         />
       )}
     </div>
