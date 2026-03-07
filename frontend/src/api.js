@@ -20,6 +20,15 @@ export const api = {
     return res.json();
   },
 
+  async updateStory(id, data) {
+    const res = await fetch(`${API_BASE}/api/stories/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+
   async getPhotos(storyId) {
     const res = await fetch(`${API_BASE}/api/photos?story_id=${storyId}`);
     return res.json();

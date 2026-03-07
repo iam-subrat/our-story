@@ -71,7 +71,7 @@ func initDB() {
 
 func enableCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
@@ -120,8 +120,39 @@ func getStory(w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
 	id := strings.TrimPrefix(r.URL.Path, "/api/stories/")
 
+	// Handle PUT request to update story
+	if r.Method == "PUT" {
+		updateStory(w, r, id)
+		return
+	}
+
 	var story Story
 	err := db.QueryRow("SELECT id, title, creator_name, album_link, story_date, created_at FROM stories WHERE id = ?", id).
+		Scan(&story.ID, &story.Title, &story.CreatorName, &story.AlbumLink, &story.StoryDate, &story.CreatedAt)
+	if err != nil {
+		http.Error(w, "Story not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(story)
+}
+
+func updateStory(w http.ResponseWriter, r *http.Request, id string) {
+	var story Story
+	if err := json.NewDecoder(r.Body).Decode(&story); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	_, err := db.Exec("UPDATE stories SET album_link = ? WHERE id = ?", story.AlbumLink, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Return updated story
+	err = db.QueryRow("SELECT id, title, creator_name, album_link, story_date, created_at FROM stories WHERE id = ?", id).
 		Scan(&story.ID, &story.Title, &story.CreatorName, &story.AlbumLink, &story.StoryDate, &story.CreatedAt)
 	if err != nil {
 		http.Error(w, "Story not found", http.StatusNotFound)

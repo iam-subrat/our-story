@@ -12,6 +12,8 @@ export default function StoryPage() {
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)
   const [showUpload, setShowUpload] = useState(false)
+  const [editingAlbum, setEditingAlbum] = useState(false)
+  const [albumLink, setAlbumLink] = useState('')
   const showUserLink = location.state?.showUserLink
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function StoryPage() {
     try {
       const data = await api.getStory(id)
       setStory(data)
+      setAlbumLink(data.album_link || '')
     } catch (error) {
       alert('Story not found')
     } finally {
@@ -42,6 +45,16 @@ export default function StoryPage() {
   const handlePhotoUploaded = () => {
     loadPhotos()
     setShowUpload(false)
+  }
+
+  const handleUpdateAlbum = async () => {
+    try {
+      const updated = await api.updateStory(id, { album_link: albumLink })
+      setStory(updated)
+      setEditingAlbum(false)
+    } catch (error) {
+      alert('Failed to update album link')
+    }
   }
 
   if (loading) {
@@ -99,18 +112,66 @@ export default function StoryPage() {
         )}
 
         {/* Album Preview */}
-        {story.album_link && (
+        {editingAlbum ? (
           <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
-            <h3 className="font-semibold text-lg mb-3">Memory Album</h3>
-            <a
-              href={story.album_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline flex items-center gap-2"
-            >
-              View Full Album on Google Photos →
-            </a>
+            <h3 className="font-semibold text-lg mb-3">Edit Album Link</h3>
+            <input
+              type="url"
+              placeholder="https://photos.app.goo.gl/..."
+              value={albumLink}
+              onChange={(e) => setAlbumLink(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none mb-3"
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={handleUpdateAlbum}
+                className="flex-1 bg-primary text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => {
+                  setEditingAlbum(false)
+                  setAlbumLink(story.album_link || '')
+                }}
+                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
+        ) : (
+          story.album_link ? (
+            <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-lg">Memory Album</h3>
+                <button
+                  onClick={() => setEditingAlbum(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Edit
+                </button>
+              </div>
+              <a
+                href={story.album_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline flex items-center gap-2"
+              >
+                View Full Album on Google Photos →
+              </a>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
+              <h3 className="font-semibold text-lg mb-3">Memory Album</h3>
+              <button
+                onClick={() => setEditingAlbum(true)}
+                className="text-primary hover:underline font-semibold"
+              >
+                + Add Google Photos Album Link
+              </button>
+            </div>
+          )
         )}
 
         {/* Share Buttons */}
