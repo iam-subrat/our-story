@@ -15,6 +15,11 @@ export const api = {
     return res.json();
   },
 
+  async getStoriesByCreator(creatorName) {
+    const res = await fetch(`${API_BASE}/api/stories?creator_name=${encodeURIComponent(creatorName)}`);
+    return res.json();
+  },
+
   async getPhotos(storyId) {
     const res = await fetch(`${API_BASE}/api/photos?story_id=${storyId}`);
     return res.json();

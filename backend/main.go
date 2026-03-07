@@ -81,6 +81,18 @@ func createStory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if this is a GET request with creator_name query
+	if r.Method == "GET" {
+		creatorName := r.URL.Query().Get("creator_name")
+		if creatorName != "" {
+			getStoriesByCreator(w, creatorName)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]Story{})
+		return
+	}
+
 	var story Story
 	if err := json.NewDecoder(r.Body).Decode(&story); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -118,6 +130,25 @@ func getStory(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(story)
+}
+
+func getStoriesByCreator(w http.ResponseWriter, creatorName string) {
+	rows, err := db.Query("SELECT id, title, creator_name, album_link, story_date, created_at FROM stories WHERE creator_name = ? ORDER BY story_date DESC", creatorName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	stories := []Story{}
+	for rows.Next() {
+		var s Story
+		rows.Scan(&s.ID, &s.Title, &s.CreatorName, &s.AlbumLink, &s.StoryDate, &s.CreatedAt)
+		stories = append(stories, s)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(stories)
 }
 
 func getPhotos(w http.ResponseWriter, r *http.Request) {

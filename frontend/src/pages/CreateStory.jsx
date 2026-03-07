@@ -17,7 +17,7 @@ export default function CreateStory() {
     setLoading(true)
     try {
       const story = await api.createStory(form)
-      navigate(`/s/${story.id}`)
+      navigate(`/s/${story.id}`, { state: { showUserLink: true, creatorName: form.creator_name } })
     } catch (error) {
       alert('Failed to create story. Please try again.')
       setLoading(false)
@@ -60,6 +60,9 @@ export default function CreateStory() {
                 onChange={(e) => setForm({ ...form, creator_name: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               />
+              <p className="text-sm text-gray-500 mt-2">
+                💡 Use the same name for all your stories to see them together in your timeline
+              </p>
             </div>
 
             <div>

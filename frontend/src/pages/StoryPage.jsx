@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation, Link } from 'react-router-dom'
 import { api } from '../api'
 import PhotoUploadModal from '../components/PhotoUploadModal'
 import Timeline from '../components/Timeline'
@@ -7,10 +7,12 @@ import ShareButtons from '../components/ShareButtons'
 
 export default function StoryPage() {
   const { id } = useParams()
+  const location = useLocation()
   const [story, setStory] = useState(null)
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)
   const [showUpload, setShowUpload] = useState(false)
+  const showUserLink = location.state?.showUserLink
 
   useEffect(() => {
     loadStory()
@@ -64,7 +66,12 @@ export default function StoryPage() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-1">{story.title}</h1>
-          <p className="text-gray-600">by {story.creator_name}</p>
+          <Link 
+            to={`/user/${encodeURIComponent(story.creator_name)}`}
+            className="text-gray-600 hover:text-primary hover:underline"
+          >
+            by {story.creator_name}
+          </Link>
           {story.story_date && (
             <p className="text-gray-500 text-sm mt-1">
               {new Date(story.story_date).toLocaleDateString('en-US', { 
@@ -78,6 +85,19 @@ export default function StoryPage() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-8">
+        {/* User Timeline Link */}
+        {showUserLink && story && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+            <p className="text-green-800 mb-2">✅ Story created successfully!</p>
+            <Link
+              to={`/user/${encodeURIComponent(story.creator_name)}`}
+              className="text-primary hover:underline font-semibold"
+            >
+              View all stories by {story.creator_name} →
+            </Link>
+          </div>
+        )}
+
         {/* Album Preview */}
         {story.album_link && (
           <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
