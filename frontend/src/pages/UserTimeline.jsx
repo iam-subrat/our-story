@@ -61,30 +61,51 @@ export default function UserTimeline() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">
-            {stories.map((story) => (
-              <Link
-                key={story.id}
-                to={`/s/${story.id}`}
-                className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{story.title}</h3>
-                {story.story_date && (
-                  <p className="text-gray-500 text-sm mb-3">
-                    {new Date(story.story_date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                )}
-                {story.album_link && (
-                  <span className="inline-flex items-center text-sm text-primary">
-                    📷 Has album
-                  </span>
-                )}
-              </Link>
-            ))}
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500"></div>
+            
+            <div className="space-y-8">
+              {stories.sort((a, b) => new Date(b.story_date) - new Date(a.story_date)).map((story, index) => (
+                <div key={story.id} className="relative flex items-start gap-6">
+                  {/* Timeline dot */}
+                  <div className="relative z-10 flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
+                      {story.story_date ? new Date(story.story_date).getDate() : '?'}
+                    </div>
+                  </div>
+                  
+                  {/* Story card */}
+                  <Link
+                    to={`/s/${story.id}`}
+                    className="flex-1 bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-400 hover:shadow-xl transition-all group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                          {story.title}
+                        </h3>
+                        {story.story_date && (
+                          <p className="text-indigo-600 font-semibold text-sm mb-2">
+                            {new Date(story.story_date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        )}
+                        {story.album_link && (
+                          <span className="inline-flex items-center text-sm text-gray-600">
+                            📷 Has album
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-2xl">→</div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
