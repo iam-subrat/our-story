@@ -17,7 +17,7 @@ export default function Landing() {
                     </p>
                     <button
                         onClick={() => navigate("/create")}
-                        className="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg"
+                        className="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg"
                     >
                         Create Your Story
                     </button>

@@ -125,7 +125,7 @@ export default function StoryPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleUpdateAlbum}
-                className="flex-1 bg-primary text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+                className="flex-1 bg-primary text-white py-2 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
               >
                 Save
               </button>
@@ -134,7 +134,7 @@ export default function StoryPage() {
                   setEditingAlbum(false)
                   setAlbumLink(story.album_link || '')
                 }}
-                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-full font-semibold hover:bg-gray-300 transition-colors"
               >
                 Cancel
               </button>
@@ -180,7 +180,7 @@ export default function StoryPage() {
         {/* Add Photo Button */}
         <button
           onClick={() => setShowUpload(true)}
-          className="w-full bg-primary text-white py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-colors mb-8 shadow-sm"
+          className="w-full bg-primary text-white py-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors mb-8 shadow-sm"
         >
           + Add Your Photo
         </button>

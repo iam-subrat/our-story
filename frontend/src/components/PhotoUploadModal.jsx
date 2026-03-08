@@ -100,7 +100,7 @@ export default function PhotoUploadModal({ storyId, onClose, onSuccess }) {
           <button
             type="submit"
             disabled={loading || !form.file}
-            className="w-full bg-primary text-white py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white py-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Uploading...' : 'Add to Story'}
           </button>
