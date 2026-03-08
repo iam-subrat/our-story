@@ -16,7 +16,7 @@ export default function PhotoUploadModal({ storyId, albumLink, onClose, onSucces
             <p className="text-gray-600 mb-6">Please add a Google Photos album link first to enable photo uploads.</p>
             <button
               onClick={onClose}
-              className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
             >
               Close
             </button>
@@ -49,14 +49,14 @@ export default function PhotoUploadModal({ storyId, albumLink, onClose, onSucces
             href={albumLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full bg-primary text-white py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-center"
+            className="block w-full bg-primary text-white py-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors text-center"
           >
             Open Google Photos Album →
           </a>
 
           <button
             onClick={onClose}
-            className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+            className="w-full bg-gray-200 text-gray-700 py-3 rounded-full font-semibold hover:bg-gray-300 transition-colors"
           >
             Close
           </button>

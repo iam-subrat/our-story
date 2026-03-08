@@ -42,7 +42,7 @@ export default function UserTimeline() {
           </div>
           <Link
             to="/create"
-            className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+            className="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
           >
             + Create Story
           </Link>
@@ -55,7 +55,7 @@ export default function UserTimeline() {
             <p className="text-gray-500">Create your first story to get started!</p>
             <Link
               to="/create"
-              className="inline-block mt-6 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="inline-block mt-6 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
             >
               Create Story
             </Link>
