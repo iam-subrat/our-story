@@ -16,26 +16,29 @@ export default function ShareButtons({ storyId, title }) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
-      <h3 className="font-semibold text-lg mb-4">Share this story</h3>
-      <div className="grid grid-cols-3 gap-3">
+    <div className="card p-6">
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="font-semibold text-ink-950">Share this story</h3>
+        <span className="pill">Link</span>
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-3">
         <button
           onClick={copyLink}
-          className="flex flex-col items-center gap-2 p-4 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
+          className="btn-soft flex flex-col items-center gap-2 rounded-3xl px-4 py-4"
         >
           <span className="text-2xl">🔗</span>
           <span className="text-sm font-medium">Copy Link</span>
         </button>
         <button
           onClick={shareWhatsApp}
-          className="flex flex-col items-center gap-2 p-4 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
+          className="btn-soft flex flex-col items-center gap-2 rounded-3xl px-4 py-4"
         >
           <img src="/whatsapp.png" alt="WhatsApp" className="w-8 h-8" />
           <span className="text-sm font-medium">WhatsApp</span>
         </button>
         <button
           onClick={shareTelegram}
-          className="flex flex-col items-center gap-2 p-4 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
+          className="btn-soft flex flex-col items-center gap-2 rounded-3xl px-4 py-4"
         >
           <img src="/telegram.png" alt="Telegram" className="w-8 h-8" />
           <span className="text-sm font-medium">Telegram</span>

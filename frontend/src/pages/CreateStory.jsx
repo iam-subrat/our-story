@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
+import DatePicker from '../components/DatePicker'
 
 export default function CreateStory() {
   const navigate = useNavigate()
@@ -25,94 +26,100 @@ export default function CreateStory() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Your Story</h1>
-          <p className="text-gray-600">Share your memories in under 30 seconds</p>
-        </div>
+    <div className="mx-auto w-full max-w-2xl">
+      <div className="mb-8">
+        <div className="kicker">New story</div>
+        <h1 className="h2 mt-1">Create a timeline for your memories.</h1>
+        <p className="mt-2 text-ink-700">
+          Takes under a minute. Share the link immediately after.
+        </p>
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Story Title
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="Summer Trip 2024"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
+      <div className="card p-6 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">
+              Story title
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Summer Trip 2024"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              className="input"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">
+              Your name
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="John Doe"
+              value={form.creator_name}
+              onChange={(e) => setForm({ ...form, creator_name: e.target.value })}
+              className="input"
+            />
+            <div className="mt-2 flex items-start gap-2 border-l-2 border-primary-200 pl-3 text-sm text-ink-600">
+              <span className="mt-0.5 text-primary-700">💡</span>
+              <span>
+                Use the same name for all your stories to see them together in your
+                timeline.
+              </span>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Your Name
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="John Doe"
-                value={form.creator_name}
-                onChange={(e) => setForm({ ...form, creator_name: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
-              <p className="text-sm text-gray-500 mt-2">
-                💡 Use the same name for all your stories to see them together in your timeline
-              </p>
-            </div>
+          <div>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">
+              Google Photos album link <span className="text-ink-500">(optional)</span>
+            </label>
+            <input
+              type="url"
+              placeholder="https://photos.app.goo.gl/..."
+              value={form.album_link}
+              onChange={(e) => setForm({ ...form, album_link: e.target.value })}
+              className="input"
+            />
+            <p className="mt-2 text-sm text-ink-600">
+              Make sure your album is set to public.
+            </p>
+          </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Google Photos Album Link (Optional)
-              </label>
-              <input
-                type="url"
-                placeholder="https://photos.app.goo.gl/..."
-                value={form.album_link}
-                onChange={(e) => setForm({ ...form, album_link: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
-              <p className="text-sm text-gray-500 mt-2">
-                Make sure your album is set to public
-              </p>
-            </div>
+          <div>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">
+              Story date <span className="text-ink-500">(optional)</span>
+            </label>
+            <DatePicker
+              value={form.story_date}
+              onChange={(story_date) => setForm({ ...form, story_date })}
+              placeholder="Select a date"
+            />
+            <p className="mt-2 text-sm text-ink-600">
+              Leave empty to use today’s date.
+            </p>
+          </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Story Date (Optional)
-              </label>
-              <input
-                type="date"
-                value={form.story_date}
-                onChange={(e) => setForm({ ...form, story_date: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
-              <p className="text-sm text-gray-500 mt-2">
-                Leave empty to use today's date
-              </p>
-            </div>
-
+          <div className="pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-white py-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full px-8 py-4 text-base"
             >
-              {loading ? 'Creating...' : 'Create Story'}
+              {loading ? 'Creating...' : 'Create story'}
             </button>
-          </form>
-        </div>
-
-        <button
-          onClick={() => navigate('/')}
-          className="mt-6 text-gray-600 hover:text-gray-900 flex items-center justify-center w-full"
-        >
-          ← Back to Home
-        </button>
+          </div>
+        </form>
       </div>
+
+      <button
+        onClick={() => navigate('/')}
+        className="mt-6 btn-ghost w-full px-6 py-3"
+      >
+        ← Back to home
+      </button>
     </div>
   )
 }

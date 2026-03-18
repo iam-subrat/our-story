@@ -59,137 +59,148 @@ export default function StoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="flex items-center justify-center py-24">
+        <div className="text-lg font-semibold text-ink-700">Loading…</div>
       </div>
     )
   }
 
   if (!story) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-600">Story not found</div>
+      <div className="flex items-center justify-center py-24">
+        <div className="text-lg font-semibold text-ink-700">Story not found</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">{story.title}</h1>
-          <Link 
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="mb-6 sm:mb-8">
+        <div className="kicker">Story</div>
+        <h1 className="h2 mt-1">{story.title}</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-600">
+          <Link
             to={`/user/${encodeURIComponent(story.creator_name)}`}
-            className="text-gray-600 hover:text-primary hover:underline"
+            className="font-semibold text-ink-800 hover:text-primary-800"
           >
             by {story.creator_name}
           </Link>
           {story.story_date && (
-            <p className="text-gray-500 text-sm mt-1">
-              {new Date(story.story_date).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            <span className="pill">
+              {new Date(story.story_date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               })}
-            </p>
+            </span>
           )}
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        {/* User Timeline Link */}
-        {showUserLink && story && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
-            <p className="text-green-800 mb-2">✅ Story created successfully!</p>
+      {showUserLink && story && (
+        <div className="card mb-6 p-5 ring-1 ring-accent-100">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="font-semibold text-ink-950">Story created!</div>
+              <div className="mt-1 text-sm text-ink-600">
+                Want all your stories in one place?
+              </div>
+            </div>
             <Link
               to={`/user/${encodeURIComponent(story.creator_name)}`}
-              className="text-primary hover:underline font-semibold"
+              className="btn-soft px-5 py-2.5"
             >
-              View all stories by {story.creator_name} →
+              View your timeline →
             </Link>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Album Preview */}
+      <div className="grid gap-5">
         {editingAlbum ? (
-          <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
-            <h3 className="font-semibold text-lg mb-3">Edit Album Link</h3>
-            <input
-              type="url"
-              placeholder="https://photos.app.goo.gl/..."
-              value={albumLink}
-              onChange={(e) => setAlbumLink(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none mb-3"
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={handleUpdateAlbum}
-                className="flex-1 bg-primary text-white py-2 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => {
-                  setEditingAlbum(false)
-                  setAlbumLink(story.album_link || '')
-                }}
-                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-full font-semibold hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
+          <div className="card p-6">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="font-semibold text-ink-950">Memory album</h3>
+              <span className="pill">Edit</span>
             </div>
-          </div>
-        ) : (
-          story.album_link ? (
-            <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-lg">Memory Album</h3>
+            <div className="mt-4">
+              <input
+                type="url"
+                placeholder="https://photos.app.goo.gl/..."
+                value={albumLink}
+                onChange={(e) => setAlbumLink(e.target.value)}
+                className="input"
+              />
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                <button onClick={handleUpdateAlbum} className="btn-primary flex-1">
+                  Save
+                </button>
                 <button
-                  onClick={() => setEditingAlbum(true)}
-                  className="text-sm text-primary hover:underline"
+                  onClick={() => {
+                    setEditingAlbum(false)
+                    setAlbumLink(story.album_link || '')
+                  }}
+                  className="btn-soft flex-1"
                 >
-                  Edit
+                  Cancel
                 </button>
               </div>
-              <a
-                href={story.album_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline flex items-center gap-2"
-              >
-                View Full Album on Google Photos →
-              </a>
             </div>
-          ) : (
-            <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
-              <h3 className="font-semibold text-lg mb-3">Memory Album</h3>
+          </div>
+        ) : story.album_link ? (
+          <div className="card p-6">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="font-semibold text-ink-950">Memory album</h3>
               <button
                 onClick={() => setEditingAlbum(true)}
-                className="text-primary hover:underline font-semibold"
+                className="btn-soft px-5 py-2.5"
               >
-                + Add Google Photos Album Link
+                Edit
               </button>
             </div>
-          )
+            <a
+              href={story.album_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex btn-soft px-6 py-3"
+            >
+              View on Google Photos →
+            </a>
+          </div>
+        ) : (
+          <div className="card p-6">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="font-semibold text-ink-950">Memory album</h3>
+              <span className="pill">Optional</span>
+            </div>
+            <button
+              onClick={() => setEditingAlbum(true)}
+              className="mt-3 btn-soft px-6 py-3"
+            >
+              + Add album link
+            </button>
+          </div>
         )}
 
-        {/* Share Buttons */}
         <ShareButtons storyId={id} title={story.title} />
 
-        {/* Add Photo Button */}
-        <button
-          onClick={() => setShowUpload(true)}
-          className="w-full bg-primary text-white py-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors mb-8 shadow-sm"
-        >
-          + Add Your Photo
-        </button>
+        <div className="card p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="font-semibold text-ink-950">Add a memory</div>
+              <div className="text-sm text-ink-600">
+                Upload a photo and leave a caption.
+              </div>
+            </div>
+            <button onClick={() => setShowUpload(true)} className="btn-primary px-8 py-3.5">
+              + Add your photo
+            </button>
+          </div>
+        </div>
 
-        {/* Timeline */}
         <Timeline photos={photos} />
       </div>
 
-      {/* Upload Modal */}
       {showUpload && (
         <PhotoUploadModal
           storyId={id}

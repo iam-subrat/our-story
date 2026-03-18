@@ -24,98 +24,92 @@ export default function UserTimeline() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="flex items-center justify-center py-24">
+        <div className="text-lg font-semibold text-ink-700">Loading…</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Stories by {creatorName}
-            </h1>
-            <p className="text-gray-600">{stories.length} {stories.length === 1 ? 'story' : 'stories'}</p>
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="kicker">Timeline</div>
+          <h1 className="h2 mt-1">Stories by {creatorName}</h1>
+          <p className="mt-2 text-ink-700">
+            {stories.length} {stories.length === 1 ? 'story' : 'stories'}
+          </p>
+        </div>
+        <Link to="/create" className="btn-primary px-7 py-3">
+          + Create story
+        </Link>
+      </div>
+
+      {stories.length === 0 ? (
+        <div className="card p-10 text-center">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-gradient-to-br from-primary-700 to-accent-500 text-white shadow-soft">
+            <span className="text-2xl">📖</span>
           </div>
-          <Link
-            to="/create"
-            className="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
-          >
-            + Create Story
+          <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight text-ink-950">
+            No stories yet
+          </h3>
+          <p className="mt-2 text-ink-700">
+            Create your first story and start collecting moments.
+          </p>
+          <Link to="/create" className="mt-6 inline-flex btn-primary px-8 py-3.5">
+            Create a story
           </Link>
         </div>
+      ) : (
+        <div className="relative">
+          <div className="absolute left-6 top-2 bottom-2 w-px bg-gradient-to-b from-primary-400 via-primary-600 to-accent-500/70" />
 
-        {stories.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">📖</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No stories yet</h3>
-            <p className="text-gray-500">Create your first story to get started!</p>
-            <Link
-              to="/create"
-              className="inline-block mt-6 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors"
-            >
-              Create Story
-            </Link>
-          </div>
-        ) : (
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500"></div>
-            
-            <div className="space-y-8">
-              {stories.sort((a, b) => new Date(b.story_date) - new Date(a.story_date)).map((story, index) => (
-                <div key={story.id} className="relative flex items-start gap-6">
-                  {/* Timeline dot */}
-                  <div className="relative z-10 flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
-                      {story.story_date ? new Date(story.story_date).getDate() : '?'}
+          <div className="space-y-5">
+            {stories
+              .slice()
+              .sort((a, b) => new Date(b.story_date) - new Date(a.story_date))
+              .map((story) => (
+                <div key={story.id} className="relative flex gap-4 sm:gap-6">
+                  <div className="relative z-10 mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-3xl bg-white/70 ring-1 ring-black/10 backdrop-blur">
+                    <div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-primary-700 to-accent-500 text-white shadow-soft">
+                      <span className="text-sm font-bold">
+                        {story.story_date ? new Date(story.story_date).getDate() : "—"}
+                      </span>
                     </div>
                   </div>
-                  
-                  {/* Story card */}
+
                   <Link
                     to={`/s/${story.id}`}
-                    className="flex-1 bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-400 hover:shadow-xl transition-all group"
+                    className="card group flex-1 p-6 transition hover:shadow-lift"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
-                          {story.title}
-                        </h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-display text-xl font-semibold tracking-tight text-ink-950 group-hover:text-primary-800 transition-colors">
+                            {story.title}
+                          </h3>
+                          {story.album_link && <span className="pill">📷 Album</span>}
+                        </div>
                         {story.story_date && (
-                          <p className="text-indigo-600 font-semibold text-sm mb-2">
+                          <div className="mt-2 text-sm font-semibold text-primary-800">
                             {new Date(story.story_date).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
-                              day: 'numeric'
+                              day: 'numeric',
                             })}
-                          </p>
-                        )}
-                        {story.album_link && (
-                          <span className="inline-flex items-center text-sm text-gray-600">
-                            📷 Has album
-                          </span>
+                          </div>
                         )}
                       </div>
-                      <div className="text-2xl">→</div>
+                      <div className="text-xl text-ink-400 group-hover:text-primary-700 transition-colors">
+                        →
+                      </div>
                     </div>
                   </Link>
                 </div>
               ))}
-            </div>
           </div>
-        )}
-
-        <Link
-          to="/"
-          className="inline-block mt-8 text-gray-600 hover:text-gray-900"
-        >
-          ← Back to Home
-        </Link>
-      </div>
+        </div>
+      )}
     </div>
   )
 }

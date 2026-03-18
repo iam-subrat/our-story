@@ -37,23 +37,20 @@ export default function PhotoUploadModal({ storyId, onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end md:items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-t-3xl md:rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Add Photo</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
-          >
-            ×
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink-950/50 p-4 md:items-center">
+      <div className="w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white/85 shadow-lift backdrop-blur-xl md:rounded-3xl max-h-[90vh] ring-1 ring-white/50">
+        <div className="sticky top-0 flex items-center justify-between border-b border-black/5 bg-white/60 px-6 py-4 backdrop-blur-xl">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-ink-950">
+            Add a memory
+          </h2>
+          <button onClick={onClose} className="btn-soft px-5 py-2.5">
+            Close
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Photo
-            </label>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">Photo</label>
             <input
               type="file"
               accept="image/*"
@@ -65,42 +62,40 @@ export default function PhotoUploadModal({ storyId, onClose, onSuccess }) {
               <img
                 src={preview}
                 alt="Preview"
-                className="mt-4 w-full h-64 object-cover rounded-lg"
+                className="mt-4 w-full h-64 object-cover rounded-2xl ring-1 ring-black/10"
               />
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Caption (Optional)
+            <label className="block text-sm font-semibold text-ink-800 mb-2">
+              Caption <span className="text-ink-500">(optional)</span>
             </label>
             <textarea
               placeholder="Add a caption..."
               value={form.caption}
               onChange={(e) => setForm({ ...form, caption: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"
+              className="textarea"
               rows="3"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Your Name
-            </label>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">Your name</label>
             <input
               type="text"
               required
               placeholder="John Doe"
               value={form.uploaded_by}
               onChange={(e) => setForm({ ...form, uploaded_by: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              className="input"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading || !form.file}
-            className="w-full bg-primary text-white py-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full px-8 py-4 text-base"
           >
             {loading ? 'Uploading...' : 'Add to Story'}
           </button>
