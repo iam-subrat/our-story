@@ -46,6 +46,9 @@ jobs:
           VITE_API_BASE: ${{ vars.VITE_API_BASE }}
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
 
+      - name: Copy index.html as 404.html (to handle client-side routing on GitHub Pages)
+        run: cp frontend/dist/index.html frontend/dist/404.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
