@@ -1,3 +1,6 @@
+import whatsappImg from '/whatsapp.png'
+import telegramImg from '/telegram.png'
+
 export default function ShareButtons({ storyId, title }) {
   const url = window.location.href
   const text = `Check out my story: ${title}`
@@ -33,14 +36,14 @@ export default function ShareButtons({ storyId, title }) {
           onClick={shareWhatsApp}
           className="btn-soft flex flex-col items-center gap-2 rounded-3xl px-4 py-4"
         >
-          <img src="/whatsapp.png" alt="WhatsApp" className="w-8 h-8" />
+          <img src={whatsappImg} alt="WhatsApp" className="w-8 h-8" />
           <span className="text-sm font-medium">WhatsApp</span>
         </button>
         <button
           onClick={shareTelegram}
           className="btn-soft flex flex-col items-center gap-2 rounded-3xl px-4 py-4"
         >
-          <img src="/telegram.png" alt="Telegram" className="w-8 h-8" />
+          <img src={telegramImg} alt="Telegram" className="w-8 h-8" />
           <span className="text-sm font-medium">Telegram</span>
         </button>
       </div>

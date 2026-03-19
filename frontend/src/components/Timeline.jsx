@@ -1,3 +1,5 @@
+const API_BASE = import.meta.env.VITE_API_BASE || ''
+
 export default function Timeline({ photos }) {
   if (photos.length === 0) {
     return (
@@ -16,7 +18,7 @@ export default function Timeline({ photos }) {
       {photos.map((photo) => (
         <div key={photo.id} className="card-strong overflow-hidden">
           <img
-            src={photo.image_url}
+            src={`${API_BASE}${photo.image_url}`}
             alt={photo.caption}
             className="w-full h-auto object-cover"
             loading="lazy"
