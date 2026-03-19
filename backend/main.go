@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -19,11 +18,11 @@ import (
 var db *sql.DB
 
 type Story struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	CreatorName string `json:"creator_name"`
-	AlbumLink   string `json:"album_link"`
-	StoryDate   string `json:"story_date"`
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	CreatorName string    `json:"creator_name"`
+	AlbumLink   string    `json:"album_link"`
+	StoryDate   string    `json:"story_date"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
@@ -38,10 +37,12 @@ type Photo struct {
 
 func initDB() {
 	var err error
+	log.Println("[DEBUG] Opening database...")
 	db, err = sql.Open("sqlite3", "./ourstory.db")
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("[DEBUG] Database opened, executing schema...")
 
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS stories (
@@ -65,8 +66,10 @@ func initDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("[DEBUG] Schema created, creating uploads directory...")
 
 	os.MkdirAll("./uploads", 0755)
+	log.Println("[DEBUG] Database initialization complete")
 }
 
 func enableCORS(w http.ResponseWriter) {
@@ -257,8 +260,10 @@ func uploadPhoto(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	log.Println("[DEBUG] Starting server...")
 	initDB()
 	defer db.Close()
+	log.Println("[DEBUG] Registering routes...")
 
 	http.HandleFunc("/api/stories", createStory)
 	http.HandleFunc("/api/stories/", getStory)
@@ -271,6 +276,6 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Printf("Server running on http://localhost:%s\n", port)
+	log.Printf("Server running on http://localhost:%s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
