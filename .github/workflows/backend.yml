@@ -8,6 +8,10 @@ on:
       - 'backend/**'
   workflow_dispatch:
 
+concurrency:
+  group: docker-build
+  cancel-in-progress: true
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
