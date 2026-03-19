@@ -4,8 +4,8 @@ export default function Landing() {
     const navigate = useNavigate();
 
     return (
-        <div className="relative">
-            <section className="relative overflow-hidden">
+        <div className="relative overflow-hidden">
+            <section className="relative rounded-2xl overflow-hidden">
                 <div className="card p-8 sm:p-12">
                     <div className="mx-auto max-w-2xl text-center">
                         <div className="pill mx-auto mb-4 w-fit">
