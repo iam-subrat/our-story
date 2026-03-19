@@ -38,16 +38,17 @@ Open http://localhost:5173
 
 **Frontend**: React + Vite + TailwindCSS  
 **Backend**: Go + SQLite  
-**Deploy**: Fly.io + Cloudflare Pages (free tier)
+**Deploy**: Docker Hub + GitHub Pages
 
 ## 📦 Production Build
 
 ### Backend
 ```bash
 cd backend
-go build -o ourstory
-./ourstory
+./build.sh
 ```
+
+> On macOS (Apple Silicon), `build.sh` automatically re-signs the binary after build. Use this instead of `go build` directly.
 
 ### Frontend
 ```bash
@@ -57,17 +58,42 @@ npm run build
 
 ## 🌐 Deploy
 
-**Backend** (Fly.io):
+### CI/CD (GitHub Actions — branch: `release/v1`)
+
+**Backend** — on push to `backend/**`:
+- Builds and pushes Docker image to Docker Hub
+- Tags with `latest` and commit SHA
+
+**Frontend** — on push to `frontend/**`:
+- Builds and deploys to GitHub Pages
+
+#### Required GitHub Secrets
+| Secret | Description |
+|---|---|
+| `DOCKERHUB_USERNAME` | Docker Hub username |
+| `DOCKERHUB_TOKEN` | Docker Hub access token |
+
+#### Required GitHub Variables
+| Variable | Description |
+|---|---|
+| `DOCKER_IMAGE_NAME` | Full image name e.g. `youruser/ourstory` |
+| `VITE_API_BASE` | Backend URL e.g. `http://your-server-ip:8080` |
+
+### Server Deployment
+
+Copy `deploy.sh` to your Linux server and run:
+
 ```bash
-cd backend
-fly launch
-fly deploy
+IMAGE="youruser/ourstory:latest" ./deploy.sh
 ```
 
-**Frontend** (Cloudflare Pages):
-- Connect GitHub repo
-- Build: `cd frontend && npm install && npm run build`
-- Output: `frontend/dist`
+Optional env vars:
+| Variable | Default | Description |
+|---|---|---|
+| `IMAGE` | required | Docker image to pull and run |
+| `CONTAINER_NAME` | `ourstory` | Container name |
+| `PORT` | `8080` | Host port to expose |
+| `DATA_DIR` | `./data` | Host directory for DB and uploads persistence |
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
 
