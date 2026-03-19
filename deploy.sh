@@ -20,6 +20,8 @@ fi
 
 # Create data directories for SQLite and uploads persistence
 mkdir -p "$DATA_DIR"
+touch "$DATA_DIR/ourstory.db"
+mkdir -p "$DATA_DIR/uploads"
 
 # Run the container
 echo "Starting container on port $PORT..."
@@ -27,8 +29,8 @@ docker run -d \
   --name "$CONTAINER_NAME" \
   --restart unless-stopped \
   -p "$PORT":8080 \
-  -v "$DATA_DIR":/root \
-  -e PORT=8080 \
+  -v "$DATA_DIR/ourstory.db":/root/ourstory.db \
+  -v "$DATA_DIR/uploads":/root/uploads \
   "$IMAGE"
 
 echo "✅ Running at http://localhost:$PORT"
