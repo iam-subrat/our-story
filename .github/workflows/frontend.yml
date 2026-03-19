@@ -6,6 +6,7 @@ on:
       - release/v1
     paths:
       - 'frontend/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
