@@ -7,7 +7,7 @@ import UserTimeline from './pages/UserTimeline'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Landing />} />
