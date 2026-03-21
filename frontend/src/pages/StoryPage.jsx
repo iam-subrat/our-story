@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useLocation, Link } from 'react-router-dom'
 import { api } from '../api'
 import PhotoUploadModal from '../components/PhotoUploadModal'
+import HeartbeatLoader from '../components/HeartbeatLoader'
 import Timeline from '../components/Timeline'
 import ShareButtons from '../components/ShareButtons'
 
@@ -57,13 +58,7 @@ export default function StoryPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-24">
-        <div className="text-lg font-semibold text-ink-700">Loading…</div>
-      </div>
-    )
-  }
+  if (loading) return <HeartbeatLoader />
 
   if (!story) {
     return (

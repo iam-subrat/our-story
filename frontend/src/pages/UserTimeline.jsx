@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { api } from '../api'
+import HeartbeatLoader from '../components/HeartbeatLoader'
 
 export default function UserTimeline() {
   const { creatorName } = useParams()
@@ -22,13 +23,7 @@ export default function UserTimeline() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-24">
-        <div className="text-lg font-semibold text-ink-700">Loading…</div>
-      </div>
-    )
-  }
+  if (loading) return <HeartbeatLoader />
 
   return (
     <div className="mx-auto w-full max-w-4xl">
