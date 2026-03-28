@@ -85,6 +85,24 @@ export const api = {
     return res.json();
   },
 
+  async renameStory(id, title) {
+    const res = await fetch(`${API_BASE}/api/stories/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ title }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async deleteStory(id) {
+    const res = await fetch(`${API_BASE}/api/stories/${id}`, {
+      method: 'DELETE',
+      headers: authHeader(),
+    });
+    if (!res.ok) throw new Error(await res.text());
+  },
+
   // ---------- photos ----------
   async getPhotos(storyId) {
     const res = await fetch(`${API_BASE}/api/photos?story_id=${storyId}`);
