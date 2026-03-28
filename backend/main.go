@@ -158,7 +158,7 @@ func migrateExistingCreators() {
 
 func enableCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 }
 
@@ -543,6 +543,60 @@ func uploadPhoto(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, photo)
 }
 
+func deletePhotoHandler(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w)
+	if r.Method == "OPTIONS" {
+		return
+	}
+	if r.Method != "DELETE" {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	userID, ok := userIDFromRequest(r)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	photoID := strings.TrimPrefix(r.URL.Path, "/api/photos/")
+	if photoID == "" {
+		http.Error(w, "photo id required", http.StatusBadRequest)
+		return
+	}
+
+	// Fetch photo and verify the requester owns the parent story
+	var imageURL, storyID string
+	err := db.QueryRow(`SELECT image_url, story_id FROM photos WHERE id = ?`, photoID).
+		Scan(&imageURL, &storyID)
+	if err != nil {
+		http.Error(w, "photo not found", http.StatusNotFound)
+		return
+	}
+
+	var ownerID string
+	db.QueryRow(`SELECT user_id FROM stories WHERE id = ?`, storyID).Scan(&ownerID)
+	if ownerID != userID {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	// Delete from DB
+	_, err = db.Exec(`DELETE FROM photos WHERE id = ?`, photoID)
+	if err != nil {
+		http.Error(w, "failed to delete photo", http.StatusInternalServerError)
+		return
+	}
+
+	// Delete file from disk (best-effort)
+	if imageURL != "" {
+		filePath := "." + imageURL // e.g. /uploads/abc.jpg → ./uploads/abc.jpg
+		os.Remove(filePath)
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // ---------- main ----------
 
 func main() {
@@ -557,6 +611,7 @@ func main() {
 	http.HandleFunc("/api/stories", storiesHandler)
 	http.HandleFunc("/api/stories/", storyHandler)
 	http.HandleFunc("/api/photos", getPhotos)
+	http.HandleFunc("/api/photos/", deletePhotoHandler)
 	http.HandleFunc("/api/upload", uploadPhoto)
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 

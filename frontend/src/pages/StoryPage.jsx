@@ -34,6 +34,11 @@ export default function StoryPage() {
     setShowUpload(false);
   };
 
+  const handlePhotoDeleted = async (photoId) => {
+    await api.deletePhoto(photoId);
+    setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+  };
+
   const handleUpdateAlbum = async () => {
     try {
       const updated = await api.updateStory(id, { album_link: albumLink });
@@ -175,7 +180,7 @@ export default function StoryPage() {
           </div>
         </div>
 
-        <Timeline photos={photos} />
+        <Timeline photos={photos} isOwner={isOwner} onDelete={handlePhotoDeleted} />
       </div>
 
       {showUpload && (

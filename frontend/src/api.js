@@ -100,4 +100,12 @@ export const api = {
     const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: formData });
     return res.json();
   },
+
+  async deletePhoto(photoId) {
+    const res = await fetch(`${API_BASE}/api/photos/${photoId}`, {
+      method: 'DELETE',
+      headers: authHeader(),
+    });
+    if (!res.ok) throw new Error(await res.text());
+  },
 };
