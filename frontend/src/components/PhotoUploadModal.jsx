@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { api } from '../api'
+import Spinner from './Spinner'
 
 export default function PhotoUploadModal({ storyId, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false)
@@ -77,6 +78,7 @@ export default function PhotoUploadModal({ storyId, onClose, onSuccess }) {
               onChange={(e) => setForm({ ...form, caption: e.target.value })}
               className="textarea"
               rows="3"
+              disabled={loading}
             />
           </div>
 
@@ -89,15 +91,22 @@ export default function PhotoUploadModal({ storyId, onClose, onSuccess }) {
               value={form.uploaded_by}
               onChange={(e) => setForm({ ...form, uploaded_by: e.target.value })}
               className="input"
+              disabled={loading}
             />
           </div>
 
           <button
             type="submit"
             disabled={loading || !form.file}
-            className="btn-primary w-full px-8 py-4 text-base"
+            className="btn-primary w-full px-8 py-4 text-base disabled:opacity-60"
           >
-            {loading ? 'Uploading...' : 'Add to Story'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Spinner /> Uploading…
+              </span>
+            ) : (
+              'Add to Story'
+            )}
           </button>
         </form>
       </div>
