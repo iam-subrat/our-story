@@ -10,7 +10,7 @@ import StoryPage from "./pages/StoryPage";
 import UserTimeline from "./pages/UserTimeline";
 
 function App() {
-  const isGithubPages = window.location.hostname.endsWith("github.io");
+  const isGithubPages = window.location.hostname.endsWith(".github.io");
   const basename = isGithubPages ? import.meta.env.BASE_URL : "/";
   return (
     <BrowserRouter basename={basename}>
