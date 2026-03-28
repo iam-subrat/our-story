@@ -1,25 +1,32 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../api'
+import { useAuth } from '../auth'
 import DatePicker from '../components/DatePicker'
 
 export default function CreateStory() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({
-    title: '',
-    creator_name: '',
-    album_link: '',
-    story_date: ''
-  })
+  const [form, setForm] = useState({ title: '', album_link: '', story_date: '' })
+
+  if (user === undefined) return null // auth loading
+  if (!user) {
+    return (
+      <div className="mx-auto w-full max-w-md text-center py-24">
+        <p className="text-ink-700 mb-6">You need to be logged in to create a story.</p>
+        <Link to="/login" className="btn-primary px-8 py-4">Log in</Link>
+      </div>
+    )
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
       const story = await api.createStory(form)
-      navigate(`/s/${story.id}`, { state: { showUserLink: true, creatorName: form.creator_name } })
-    } catch (error) {
+      navigate(`/s/${story.id}`, { state: { isOwner: true } })
+    } catch {
       alert('Failed to create story. Please try again.')
       setLoading(false)
     }
@@ -30,17 +37,13 @@ export default function CreateStory() {
       <div className="mb-8">
         <div className="kicker">New story</div>
         <h1 className="h2 mt-1">Create a timeline for your memories.</h1>
-        <p className="mt-2 text-ink-700">
-          Takes under a minute. Share the link immediately after.
-        </p>
+        <p className="mt-2 text-ink-700">Takes under a minute. Share the link immediately after.</p>
       </div>
 
       <div className="card p-6 sm:p-8">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-ink-800 mb-2">
-              Story title
-            </label>
+            <label className="block text-sm font-semibold text-ink-800 mb-2">Story title</label>
             <input
               type="text"
               required
@@ -49,27 +52,6 @@ export default function CreateStory() {
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className="input"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-ink-800 mb-2">
-              Your name
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="John Doe"
-              value={form.creator_name}
-              onChange={(e) => setForm({ ...form, creator_name: e.target.value })}
-              className="input"
-            />
-            <div className="mt-2 flex items-start gap-2 border-l-2 border-primary-200 pl-3 text-sm text-ink-600">
-              <span className="mt-0.5 text-primary-700">💡</span>
-              <span>
-                Use the same name for all your stories to see them together in your
-                timeline.
-              </span>
-            </div>
           </div>
 
           <div>
@@ -83,9 +65,7 @@ export default function CreateStory() {
               onChange={(e) => setForm({ ...form, album_link: e.target.value })}
               className="input"
             />
-            <p className="mt-2 text-sm text-ink-600">
-              Make sure your album is set to public.
-            </p>
+            <p className="mt-2 text-sm text-ink-600">Make sure your album is set to public.</p>
           </div>
 
           <div>
@@ -97,27 +77,18 @@ export default function CreateStory() {
               onChange={(story_date) => setForm({ ...form, story_date })}
               placeholder="Select a date"
             />
-            <p className="mt-2 text-sm text-ink-600">
-              Leave empty to use today’s date.
-            </p>
+            <p className="mt-2 text-sm text-ink-600">Leave empty to use today's date.</p>
           </div>
 
           <div className="pt-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full px-8 py-4 text-base"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full px-8 py-4 text-base">
               {loading ? 'Creating...' : 'Create story'}
             </button>
           </div>
         </form>
       </div>
 
-      <button
-        onClick={() => navigate('/')}
-        className="mt-6 btn-ghost w-full px-6 py-3"
-      >
+      <button onClick={() => navigate('/')} className="mt-6 btn-ghost w-full px-6 py-3">
         ← Back to home
       </button>
     </div>
