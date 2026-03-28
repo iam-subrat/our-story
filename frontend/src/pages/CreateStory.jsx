@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
 import DatePicker from '../components/DatePicker'
+import Spinner from '../components/Spinner'
 
 export default function CreateStory() {
   const navigate = useNavigate()
@@ -81,8 +82,14 @@ export default function CreateStory() {
           </div>
 
           <div className="pt-2">
-            <button type="submit" disabled={loading} className="btn-primary w-full px-8 py-4 text-base">
-              {loading ? 'Creating...' : 'Create story'}
+            <button type="submit" disabled={loading} className="btn-primary w-full px-8 py-4 text-base disabled:opacity-60">
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Spinner /> Creating…
+                </span>
+              ) : (
+                'Create story'
+              )}
             </button>
           </div>
         </form>

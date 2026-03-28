@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { api } from '../api';
 import { useAuth } from '../auth';
+import Spinner from '../components/Spinner';
 
 export default function ClaimAccount() {
   const navigate = useNavigate();
@@ -69,8 +70,14 @@ export default function ClaimAccount() {
             />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
-          <button type="submit" disabled={loading} className="btn-primary w-full py-4">
-            {loading ? 'Claiming…' : 'Claim account'}
+          <button type="submit" disabled={loading} className="btn-primary w-full py-4 disabled:opacity-60">
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Spinner /> Claiming…
+              </span>
+            ) : (
+              'Claim account'
+            )}
           </button>
         </form>
       </div>

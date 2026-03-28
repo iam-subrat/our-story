@@ -411,6 +411,9 @@ func storiesHandler(w http.ResponseWriter, r *http.Request) {
 
 func storyHandler(w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
+	if r.Method == "OPTIONS" {
+		return
+	}
 	id := strings.TrimPrefix(r.URL.Path, "/api/stories/")
 
 	if r.Method == "PUT" {
@@ -429,6 +432,22 @@ func storyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Method == "DELETE" {
+		userID, ok := userIDFromRequest(r)
+		if !ok {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		var ownerID string
+		db.QueryRow(`SELECT user_id FROM stories WHERE id = ?`, id).Scan(&ownerID)
+		if ownerID != userID {
+			http.Error(w, "forbidden", http.StatusForbidden)
+			return
+		}
+		deleteStory(w, id)
+		return
+	}
+
 	// GET — public
 	var story Story
 	err := db.QueryRow(`SELECT id, title, creator_name, COALESCE(user_id,''), album_link, story_date, created_at FROM stories WHERE id = ?`, id).
@@ -442,18 +461,57 @@ func storyHandler(w http.ResponseWriter, r *http.Request) {
 
 func updateStory(w http.ResponseWriter, r *http.Request, id string) {
 	var body struct {
+		Title     string `json:"title"`
 		AlbumLink string `json:"album_link"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	db.Exec(`UPDATE stories SET album_link = ? WHERE id = ?`, body.AlbumLink, id)
+	// Update album_link always; update title only when non-empty
+	if body.Title != "" {
+		db.Exec(`UPDATE stories SET title = ?, album_link = ? WHERE id = ?`, body.Title, body.AlbumLink, id)
+	} else {
+		db.Exec(`UPDATE stories SET album_link = ? WHERE id = ?`, body.AlbumLink, id)
+	}
 
 	var story Story
 	db.QueryRow(`SELECT id, title, creator_name, COALESCE(user_id,''), album_link, story_date, created_at FROM stories WHERE id = ?`, id).
 		Scan(&story.ID, &story.Title, &story.CreatorName, &story.UserID, &story.AlbumLink, &story.StoryDate, &story.CreatedAt)
 	writeJSON(w, story)
+}
+
+func deleteStory(w http.ResponseWriter, id string) {
+	// Collect photo files for disk cleanup
+	rows, _ := db.Query(`SELECT image_url FROM photos WHERE story_id = ?`, id)
+	var imageURLs []string
+	if rows != nil {
+		for rows.Next() {
+			var u string
+			rows.Scan(&u)
+			imageURLs = append(imageURLs, u)
+		}
+		rows.Close()
+	}
+
+	// Delete photos from DB
+	db.Exec(`DELETE FROM photos WHERE story_id = ?`, id)
+
+	// Delete story from DB
+	_, err := db.Exec(`DELETE FROM stories WHERE id = ?`, id)
+	if err != nil {
+		http.Error(w, "failed to delete story", http.StatusInternalServerError)
+		return
+	}
+
+	// Best-effort: remove photo files from disk
+	for _, u := range imageURLs {
+		if u != "" {
+			os.Remove("." + u)
+		}
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func getStoriesByUserID(w http.ResponseWriter, userID string) {
