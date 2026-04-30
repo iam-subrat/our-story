@@ -11,3 +11,8 @@ frontend/.env
 # General
 .DS_Store
 *.log
+
+# Others
+.claude/
+CLAUDE.md
+.claudeignore
